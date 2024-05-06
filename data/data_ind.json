@@ -1,0 +1,22 @@
+[
+    {
+        "start": "russia",
+        "finish": "usa",
+        "number": 12
+    },
+    {
+        "start": "russia",
+        "finish": "italy",
+        "number": 45
+    },
+    {
+        "start": "usa",
+        "finish": "russia",
+        "number": 12
+    },
+    {
+        "start": "paris",
+        "finish": "brazil",
+        "number": 12
+    }
+]

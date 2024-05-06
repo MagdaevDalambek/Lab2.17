@@ -1,0 +1,22 @@
+[
+    {
+        "start": "russia",
+        "finish": "italy",
+        "number": 95
+    },
+    {
+        "start": "London",
+        "finish": "Paris",
+        "number": 777
+    },
+    {
+        "start": "Germany",
+        "finish": "Greece",
+        "number": 75
+    },
+    {
+        "start": "Portugal",
+        "finish": "Greece",
+        "number": 75
+    }
+]
