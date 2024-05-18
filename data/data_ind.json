@@ -1,22 +1,17 @@
 [
     {
-        "start": "russia",
-        "finish": "usa",
-        "number": 12
+        "name": "Magdaev D.M.",
+        "group": 3,
+        "grade": "5 4 3 5 4"
     },
     {
-        "start": "russia",
-        "finish": "italy",
-        "number": 45
+        "name": "Ivanov I.I.",
+        "group": 9,
+        "grade": "2 4 5 5 3"
     },
     {
-        "start": "usa",
-        "finish": "russia",
-        "number": 12
-    },
-    {
-        "start": "paris",
-        "finish": "brazil",
-        "number": 12
+        "name": "Motovilov V.B.",
+        "group": 7,
+        "grade": "5 4 5 4 3"
     }
 ]

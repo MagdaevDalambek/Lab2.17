@@ -7,113 +7,116 @@
 
 import json
 import click
-
-
-def display_routes(routes):
-    """
-    Отобразить список маршрутов
-    """
-    if routes:
-        line = '+-{}-+-{}-+-{}-+-{}-+'.format(
-            '-' * 4,
-            '-' * 30,
-            '-' * 20,
-            '-' * 14
-        )
-        print(line)
-        print(
-            '| {:^4} | {:^30} | {:^20} | {:^14} |'.format(
-                "№",
-                "Начальный пункт",
-                "Конечный пункт",
-                "Номер маршрута"
-            )
-        )
-        print(line)
-
-        for idx, worker in enumerate(routes, 1):
-            print(
-                '| {:>4} | {:<30} | {:<20} | {:>14} |'.format(
-                    idx,
-                    worker.get('start', ''),
-                    worker.get('finish', ''),
-                    worker.get('number', 0)
-                )
-            )
-        print(line)
-    else:
-        print("Список маршрутов пуст")
-
-
-def load_routes(file_name):
-    """
-    Загрузить данные из файла JSON
-    """
-    with open(file_name, "r", encoding="utf-8") as fin:
-        return json.load(fin)
-
-
-def save_routes(file_name, staff):
-    """
-    Сохранить данные в файл JSON
-    """
-    with open(file_name, "w", encoding="utf-8") as fout:
-        json.dump(staff, fout, ensure_ascii=False, indent=4)
+from jsonschema import validate, ValidationError
 
 
 @click.group()
-def commands():
+def cli():
     pass
 
 
-@commands.command("add")
-@click.argument("filename")
-@click.option("--start", help="Start")
-@click.option("--finish", help="Finish")
-@click.option("--number", help="Number")
-def add(filename, start, finish, number):
+@cli.command("add")
+@click.argument('filename')
+@click.option("-n", "--name")
+@click.option("-g", "--group")
+@click.option("-gr", "--grade")
+def add(filename, name, group, grade):
     """
-    Добавить данные о маршруте
+    Добавить данные о студенте
     """
-    routes = load_routes(filename)
-    route = {
-        "start": start,
-        "finish": finish,
-        "number": number,
+    # Запросить данные о студенте.
+    students = load_students(filename)
+    students.append(
+        {
+            'name': name,
+            'group': group,
+            'grade': grade,
+        }
+    )
+    with open(filename, "w", encoding="utf-8") as fout:
+        json.dump(students, fout, ensure_ascii=False, indent=4)
+    click.secho("Студент добавлен")
+
+
+@cli.command("display")
+@click.argument('filename')
+@click.option('--select', '-s', type=int)
+def display(filename, select=None):
+    """
+    Отобразить список студентов
+    """
+    students = load_students(filename)
+    if select == 1:
+        students = selected(students)
+
+    line = '+-{}-+-{}-+-{}-+-{}-+'.format(
+        '-' * 4,
+        '-' * 30,
+        '-' * 20,
+        '-' * 15
+    )
+    print(line)
+    print(
+        '| {:^4} | {:^30} | {:^20} | {:^15} |'.format(
+            "№",
+            "Ф.И.О.",
+            "Группа",
+            "Успеваемость"
+        )
+    )
+    print(line)
+
+    # Вывести данные о всех студентах.
+    for idx, student in enumerate(students, 1):
+        print(
+            '| {:>4} | {:<30} | {:<20} | {:>15} |'.format(
+                idx,
+                student.get('name', ''),
+                student.get('group', ''),
+                student.get('grade', 0)
+            )
+        )
+    print(line)
+
+
+def selected(list):
+    # Проверить сведения студентов из списка.
+    students = []
+    for student in list:
+        result = [int(x) for x in (student.get('grade', '').split())]
+        if sum(result) / max(len(result), 1) >= 4.0:
+            students.append(student)
+    return students
+
+
+def load_students(filename):
+    schema = {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "group": {"type": "integer"},
+                "grade": {"type": "string"},
+            },
+            "required": [
+                "name",
+                "group",
+                "grade",
+            ],
+        },
     }
-    routes.append(route)
-    save_routes(filename, routes)
+    with open(filename, "r") as file_in:
+        data = json.load(file_in)  # Прочитать данные из файла
+
+    try:
+        # Валидация
+        validate(instance=data, schema=schema)
+        print("JSON валиден по схеме.")
+    except ValidationError as e:
+        print(f"Ошибка валидации: {e.message}")
+    return data
 
 
-@commands.command("display")
-@click.argument("filename")
-def display(filename):
-    """
-    Отобразить список маршрутов
-    """
-    routes = load_routes(filename)
-    display_routes(routes)
-
-
-@commands.command("select")
-@click.argument("number")
-@click.argument("filename")
-def select(filename, number):
-    """
-    Выбрать маршрут с заданным номером
-    """
-    routes = load_routes(filename)
-    result = []
-    for route in routes:
-        if route.get("number") == number:
-            result.append(route)
-
-    display_routes(result)
-
-
-def main():
-    commands()
-
-
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    cli()

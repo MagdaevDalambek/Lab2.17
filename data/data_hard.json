@@ -1,22 +1,17 @@
 [
     {
-        "start": "russia",
-        "finish": "italy",
-        "number": 95
+        "name": "Ivanov I.I.",
+        "group": 4,
+        "grade": "3 3 4 3 4"
     },
     {
-        "start": "London",
-        "finish": "Paris",
-        "number": 777
+        "name": "Magdaev D.M.",
+        "group": 5,
+        "grade": "3 3 4 3 4"
     },
     {
-        "start": "Germany",
-        "finish": "Greece",
-        "number": 75
-    },
-    {
-        "start": "Portugal",
-        "finish": "Greece",
-        "number": 75
+        "name": "Motovilov V.B.",
+        "group": 7,
+        "grade": "5 5 4 3 4"
     }
 ]
